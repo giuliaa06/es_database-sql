@@ -1,0 +1,213 @@
+-- Creazione del database
+CREATE DATABASE IF NOT EXISTS ConcertiDB;
+USE ConcertiDB;
+
+-- Creazione delle tabelle
+
+-- Tabella 'Direttori' (creata prima di 'Orchestra')
+CREATE TABLE IF NOT EXISTS Direttori (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cognome VARCHAR(100) NOT NULL
+);
+
+-- Tabella 'Sale'
+CREATE TABLE IF NOT EXISTS Sale (
+    id_sala INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    capienza INT NOT NULL
+);
+
+-- Tabella 'Orchestra' (ora può fare riferimento correttamente alla tabella 'Direttori')
+CREATE TABLE IF NOT EXISTS Orchestra (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    direttore_id INT,
+    FOREIGN KEY (direttore_id) REFERENCES Direttori(id)
+);
+
+-- Tabella 'Autori'
+CREATE TABLE IF NOT EXISTS Autori (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cognome VARCHAR(100) NOT NULL
+);
+
+-- Tabella 'Pezzi_Musicali'
+CREATE TABLE IF NOT EXISTS Pezzi_Musicali (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titolo VARCHAR(200) NOT NULL
+);
+
+-- Tabella 'Orchestrali'
+CREATE TABLE IF NOT EXISTS Orchestrali (
+    matricola INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cognome VARCHAR(100) NOT NULL
+);
+
+-- Tabella 'Strumenti'
+CREATE TABLE IF NOT EXISTS Strumenti (
+    codice INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+-- Tabella 'Concerti'
+CREATE TABLE IF NOT EXISTS Concerti (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    data DATE NOT NULL,
+    titolo VARCHAR(200) NOT NULL,
+    descrizione TEXT,
+    sala_id INT,
+    orchestra_id INT,
+    FOREIGN KEY (sala_id) REFERENCES Sale(id_sala),
+    FOREIGN KEY (orchestra_id) REFERENCES Orchestra(id)
+);
+
+-- Tabella 'Concerto_PezziMusicali'
+CREATE TABLE IF NOT EXISTS Concerto_PezziMusicali (
+    concerto_id INT,
+    pezzo_id INT,
+    PRIMARY KEY (concerto_id, pezzo_id),
+    FOREIGN KEY (concerto_id) REFERENCES Concerti(id),
+    FOREIGN KEY (pezzo_id) REFERENCES Pezzi_Musicali(id)
+);
+
+-- Tabella 'Autori_PezziMusicali'
+CREATE TABLE IF NOT EXISTS Autori_PezziMusicali (
+    pezzo_id INT,
+    autore_id INT,
+    PRIMARY KEY (pezzo_id, autore_id),
+    FOREIGN KEY (pezzo_id) REFERENCES Pezzi_Musicali(id),
+    FOREIGN KEY (autore_id) REFERENCES Autori(id)
+);
+
+-- Tabella 'Orchestra_Orchestrali'
+CREATE TABLE IF NOT EXISTS Orchestra_Orchestrali (
+    orchestra_id INT,
+    orchestrale_id INT,
+    PRIMARY KEY (orchestra_id, orchestrale_id),
+    FOREIGN KEY (orchestra_id) REFERENCES Orchestra(id),
+    FOREIGN KEY (orchestrale_id) REFERENCES Orchestrali(matricola)
+);
+
+-- Tabella 'Orchestrale_Suona'
+CREATE TABLE IF NOT EXISTS Orchestrale_Suona (
+    orchestrale_id INT,
+    strumento_id INT,
+    PRIMARY KEY (orchestrale_id, strumento_id),
+    FOREIGN KEY (orchestrale_id) REFERENCES Orchestrali(matricola),
+    FOREIGN KEY (strumento_id) REFERENCES Strumenti(codice)
+);
+
+-- Popolamento delle tabelle (esempi)
+
+-- Aggiunta di un direttore
+INSERT INTO Direttori (nome, cognome) VALUES ('Giuseppe', 'Verdi');
+
+-- Aggiunta di un'orchestra
+INSERT INTO Orchestra (nome, direttore_id) VALUES ('Orchestra Sinfonica', 1);
+
+-- Aggiunta di una sala
+INSERT INTO Sale (nome, capienza) VALUES ('Sala Grande', 1500);
+
+-- Aggiunta di un concerto
+INSERT INTO Concerti (data, titolo, descrizione, sala_id, orchestra_id) 
+VALUES ('2025-03-10', 'Concerto di Primavera', 'Un concerto primaverile con composizioni classiche', 1, 1);
+
+-- Aggiunta di un pezzo musicale
+INSERT INTO Pezzi_Musicali (titolo) VALUES ('Sinfonia n.9');
+
+-- Associazione pezzo musicale al concerto
+INSERT INTO Concerto_PezziMusicali (concerto_id, pezzo_id) VALUES (1, 1);
+
+-- Aggiunta di un autore
+INSERT INTO Autori (nome, cognome) VALUES ('Ludwig', 'Beethoven');
+
+-- Associazione autore a pezzo musicale
+INSERT INTO Autori_PezziMusicali (pezzo_id, autore_id) VALUES (1, 1);
+
+-- Aggiunta di un orchestrale
+INSERT INTO Orchestrali (nome, cognome) VALUES ('Marco', 'Rossi');
+
+-- Associazione orchestrale a orchestra
+INSERT INTO Orchestra_Orchestrali (orchestra_id, orchestrale_id) VALUES (1, 1);
+
+-- Aggiunta di uno strumento
+INSERT INTO Strumenti (nome) VALUES ('Violino');
+
+-- Associazione orchestrale a strumento
+INSERT INTO Orchestrale_Suona (orchestrale_id, strumento_id) VALUES (1, 1);
+
+
+
+
+
+
+
+
+
+DATABASE POPOLATO
+-- Popolamento delle tabelle (dati di esempio)
+
+-- Aggiunta di un direttore
+INSERT INTO Direttori (nome, cognome) VALUES ('Giuseppe', 'Verdi');
+INSERT INTO Direttori (nome, cognome) VALUES ('Claude', 'Debussy');
+INSERT INTO Direttori (nome, cognome) VALUES ('Leonard', 'Bernstein');
+
+-- Aggiunta di un'orchestra
+INSERT INTO Orchestra (nome, direttore_id) VALUES ('Orchestra Sinfonica', 1);
+INSERT INTO Orchestra (nome, direttore_id) VALUES ('Orchestra Filarmonica', 2);
+INSERT INTO Orchestra (nome, direttore_id) VALUES ('Orchestra Stabile', 3);
+
+-- Aggiunta di una sala
+INSERT INTO Sale (nome, capienza) VALUES ('Sala Grande', 1500);
+INSERT INTO Sale (nome, capienza) VALUES ('Sala Piccola', 500);
+
+-- Aggiunta di concerti
+INSERT INTO Concerti (data, titolo, descrizione, sala_id, orchestra_id) 
+VALUES ('2025-03-10', 'Concerto di Primavera', 'Un concerto primaverile con composizioni classiche', 1, 1);
+INSERT INTO Concerti (data, titolo, descrizione, sala_id, orchestra_id) 
+VALUES ('2025-04-15', 'Concerto Barocco', 'Musiche barocche eseguite da un’orchestra d\'archi', 2, 2);
+INSERT INTO Concerti (data, titolo, descrizione, sala_id, orchestra_id) 
+VALUES ('2025-05-20', 'Concerto Moderno', 'Un programma di musica moderna e contemporanea', 1, 3);
+
+-- Aggiunta di pezzi musicali
+INSERT INTO Pezzi_Musicali (titolo) VALUES ('Sinfonia n.9');
+INSERT INTO Pezzi_Musicali (titolo) VALUES ('Clair de Lune');
+INSERT INTO Pezzi_Musicali (titolo) VALUES ('Rhapsody in Blue');
+
+-- Associazione pezzi musicali ai concerti
+INSERT INTO Concerto_PezziMusicali (concerto_id, pezzo_id) VALUES (1, 1);  -- Concerto di Primavera - Sinfonia n.9
+INSERT INTO Concerto_PezziMusicali (concerto_id, pezzo_id) VALUES (2, 2);  -- Concerto Barocco - Clair de Lune
+INSERT INTO Concerto_PezziMusicali (concerto_id, pezzo_id) VALUES (3, 3);  -- Concerto Moderno - Rhapsody in Blue
+
+-- Aggiunta di autori
+INSERT INTO Autori (nome, cognome) VALUES ('Ludwig', 'Beethoven');
+INSERT INTO Autori (nome, cognome) VALUES ('Claude', 'Debussy');
+INSERT INTO Autori (nome, cognome) VALUES ('George', 'Gershwin');
+
+-- Associazione autori a pezzi musicali
+INSERT INTO Autori_PezziMusicali (pezzo_id, autore_id) VALUES (1, 1);  -- Sinfonia n.9 - Beethoven
+INSERT INTO Autori_PezziMusicali (pezzo_id, autore_id) VALUES (2, 2);  -- Clair de Lune - Debussy
+INSERT INTO Autori_PezziMusicali (pezzo_id, autore_id) VALUES (3, 3);  -- Rhapsody in Blue - Gershwin
+
+-- Aggiunta di orchestrali
+INSERT INTO Orchestrali (nome, cognome) VALUES ('Marco', 'Rossi');
+INSERT INTO Orchestrali (nome, cognome) VALUES ('Anna', 'Bianchi');
+INSERT INTO Orchestrali (nome, cognome) VALUES ('Giovanni', 'Verdi');
+
+-- Associazione orchestrali a orchestra
+INSERT INTO Orchestra_Orchestrali (orchestra_id, orchestrale_id) VALUES (1, 1);
+INSERT INTO Orchestra_Orchestrali (orchestra_id, orchestrale_id) VALUES (2, 2);
+INSERT INTO Orchestra_Orchestrali (orchestra_id, orchestrale_id) VALUES (3, 3);
+
+-- Aggiunta di strumenti
+INSERT INTO Strumenti (nome) VALUES ('Violino');
+INSERT INTO Strumenti (nome) VALUES ('Pianoforte');
+INSERT INTO Strumenti (nome) VALUES ('Flauto');
+
+-- Associazione orchestrali a strumenti
+INSERT INTO Orchestrale_Suona (orchestrale_id, strumento_id) VALUES (1, 1);  -- Marco Rossi suona Violino
+INSERT INTO Orchestrale_Suona (orchestrale_id, strumento_id) VALUES (2, 2);  -- Anna Bianchi suona Pianoforte
+INSERT INTO Orchestrale_Suona (orchestrale_id, strumento_id) VALUES (3, 3);  -- Giovanni Verdi suona Flauto
