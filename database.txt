@@ -11,6 +11,9 @@ CREATE TABLE IF NOT EXISTS Direttori (
     cognome VARCHAR(100) NOT NULL
 );
 
+
+
+
 -- Tabella 'Sale'
 CREATE TABLE IF NOT EXISTS Sale (
     id_sala INT AUTO_INCREMENT PRIMARY KEY,
